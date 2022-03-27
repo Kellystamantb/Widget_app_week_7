@@ -35,11 +35,13 @@ function showTemperature(response) {
   let wind = Math.round(response.data.wind.speed);
   let windSpeed = document.querySelector("#wind-speed");
   windSpeed.innerHTML = `Wind: ${wind} km/h`;
+  let iconElement = document.querySelector("#icons");
   iconElement.setAttribute(
     "src",
     `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
   );
   iconElement.setAttribute("alt", response.data.weather[0].description);
+  celsiusTemperature = response.data.main.temp;
 }
 
 //current meteo in current city
@@ -65,7 +67,13 @@ function getCurrentTemp(response) {
   let humidityWeather = document.querySelector("#humidity-level");
   let wind = Math.round(response.data.wind.speed);
   let windSpeed = document.querySelector("#wind-speed");
-
+  let iconElement = document.querySelector("#icons");
+  celsiusTemperature = response.data.main.temp;
+  temperature.innerHTML = `${currentTemperature}°C`;
+  currentCity.innerHTML = `${location}`;
+  weatherDescription.innerHTML = `${description}`;
+  humidityWeather.innerHTML = `Humidity: ${humidity}%`;
+  windSpeed.innerHTML = `Wind: ${wind} km/h`;
   iconElement.setAttribute(
     "src",
     `http://openweathermap.org/img/wn/${response.data.weather[0].icon}@2x.png`
@@ -101,3 +109,30 @@ let daysWeek = [
 ];
 let dayWeek = daysWeek[now.getDay()];
 h3.innerHTML = `${dayWeek} ${hours}:${minutes}`;
+// add temperature conversion
+function showTemperatureFahrenheit(event) {
+  event.preventDefault();
+  let fahrenheitTemperature = (celsiusTemperature * 9) / 5 + 32;
+  // remove the active class from celsius link
+  celsiusLink.classList.remove("active");
+  fahrenheitLink.classList.add("active");
+  let temperatureElement = document.querySelector("#temperature-today");
+  let temperatureFahrenheit = Math.round(fahrenheitTemperature);
+  temperatureElement.innerHTML = `${temperatureFahrenheit}°F`;
+}
+function showTemperatureCelsius(event) {
+  event.preventDefault();
+  celsiusLink.classList.add("active");
+  fahrenheitLink.classList.remove("active");
+  let temperatureElement = document.querySelector("#temperature-today");
+  let temperatureCelsius = Math.round(celsiusTemperature);
+  temperatureElement.innerHTML = `${temperatureCelsius}°C`;
+}
+
+let celsiusTemperature = null;
+
+let fahrenheitLink = document.querySelector("#fahrenheit");
+fahrenheitLink.addEventListener("click", showTemperatureFahrenheit);
+
+let celsiusLink = document.querySelector("#celsius");
+celsiusLink.addEventListener("click", showTemperatureCelsius);
